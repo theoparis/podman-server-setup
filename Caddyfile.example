@@ -1,0 +1,12 @@
+{
+	acme_ca https://acme-staging-v02.api.letsencrypt.org/directory
+	email {$TLS_EMAIL}
+}
+
+git.example.com {
+    reverse_proxy git:3000
+}
+
+ci.example.com {
+	reverse_proxy drone:80
+}

@@ -1,0 +1,31 @@
+---
+version: "3"
+services:
+  proxy:
+    build: ./build/caddy
+    env_file: .env
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+    ports:
+      - "80:80"
+      - "443:443"
+  git:
+    image: docker.io/gitea/gitea:latest
+    ports:
+      - "2222:22"
+    volumes:
+      - ./data/git:/data
+    env_file: .env
+  drone:
+    image: docker.io/drone/drone
+    env_file: .env
+  drone-runner:
+    image: docker.io/drone/drone-runner-docker
+    volumes:
+      # Change this to /var/run/docker.sock if you are using docker
+      - /run/podman/podman.sock:/var/run/docker.sock
+    environment:
+      DRONE_RUNNER_NAME: ${HOSTNAME}
+      DRONE_RPC_HOST: ${DRONE_SERVER_HOST}
+      DRONE_RPC_PROTO: ${DRONE_SERVER_PROTO}
+    env_file: .env
